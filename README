@@ -1,0 +1,50 @@
+# Pure docker way of doing this
+docker build -t migdal:27Aug2022 .
+docker run -t -i migdal:27Aug2022 /bin/bash
+cd /home/nraja
+voms-proxy-init -cert /home/nraja/.globus/usercert.pem -key /home/nraja/.globus/userkey.pem
+
+########################
+##### If running for the first time
+########################
+mkdir dirac_ui
+cd dirac_ui
+curl -LO https://github.com/DIRACGrid/DIRACOS2/releases/latest/download/DIRACOS-Linux-$(uname -m).sh
+bash DIRACOS-Linux-$(uname -m).sh
+rm DIRACOS-Linux-$(uname -m).sh
+source diracos/diracosrc
+pip install DIRAC==7.3.26
+dirac-proxy-init -x -N -C /home/nraja/.globus/usercert.pem -K /home/nraja/.globus/userkey.pem
+dirac-configure -F -S GridPP -C dips://dirac01.grid.hep.ph.ic.ac.uk:9135/Configuration/Server -I
+########################
+
+##### Everytime the you login
+cd /home/nraja
+source /home/nraja/dirac_ui/diracos/diracosrc
+##### Every time the proxy expires
+dirac-proxy-init -g gridpp_user -M -U -C /home/nraja/.globus/usercert.pem -K /home/nraja/.globus/userkey.pem 
+
+### Compile and run the container
+docker-compose build
+docker run -it migdal-migdal /bin/bash
+docker exec -it migdal-migdal-1 /bin/bash
+
+# Create random files of different sizes
+openssl rand -out migdalTest-1GB.txt -base64 $(( 2**30 ))
+dd if=/dev/random of=migdalTest-4GB.txt bs=1M count=4000
+
+# Test copy of file
+time gfal-copy -v `pwd`/migdalTest-1GB.txt srm://heplnx204.pp.rl.ac.uk/pnfs/pp.rl.ac.uk/data/gridpp/rajaTest.txt
+time gfal-copy -f `pwd`/migdalTest-100MB.txt srm://heplnx204.pp.rl.ac.uk/pnfs/pp.rl.ac.uk/data/gridpp/migdalTest-100MB.txt
+time gfal-copy -f --checksum-mode both `pwd`/migdalTest-100MB.txt srm://heplnx204.pp.rl.ac.uk/pnfs/pp.rl.ac.uk/data/gridpp/migdalTest-100MB.txt
+
+# Questions :
+1. What protocol for destination? - assume local file for source
+2. Use gfal-copy for actual copy. Any other preference?
+3. Checksum mode? (works with --checksum-mode both)
+4. Space tokens? (nothing currently)
+5. Multiple transfers in parallel?
+6. Streams within a given transfer?
+    -n NBSTREAMS, --nbstreams NBSTREAMS
+    specify the maximum number of parallel streams to use for the copy
+7. Run an upload of a given file 10 times and average the time taken?
