@@ -1,33 +1,39 @@
 #!/usr/bin/python3
-import os, sys, subprocess
+import os, sys, time, subprocess
 import fts3.rest.client as fsubmit
 import fts3.rest.client.easy as fts3
 from db_interface import *
+from configuration import *
 
-sFile = sys.argv[1] # Source : disk on migdal DAQ pc
-dFile = sys.argv[2] # Destination : PPD dCache
-tapeFile = sys.argv[3] # Tape (antares) destination
-cksum = sys.argv[4] # File checksum
-ftsServ = "https://lcgfts3.gridpp.rl.ac.uk:8446"
+di = mUtils()
+lfn = sys.argv[1] # "Logical file name"
+mf = di.isFileInDB(lfn) # Get the record from sqlite
 
-print(sFile, dFile, tapeFile, cksum)
-s = doTheSQLiteAndGetItsPointer()
-mlfn = self.s.query(mig_db).filter(mig_db.migFile==lfn).all()
+cksum = mf.migChkSum
+sFile = "/" + mf.migDisk + lfn
+dFile = miConf.dCachePath + lfn
+tapeFile = miConf.antPath + lfn
+
+print(f"Transferring {lfn} to PPD dCache ...")
 
 # Transfer to dCache
 command = f"gfal-copy -v -f -K adler32:{cksum} -r -p --checksum-mode both"
 comm = f"{command} {sFile} {dFile}"
+di.updateFileInDB(lfn, dCacheStatus="Ongoing")
 runComm = subprocess.Popen(comm, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
 theInfo = runComm.communicate()
 transferError = 0
 for aa in theInfo:
     if "ERROR" in str(aa) or "Error" in str(aa) or "error" in str(aa):
         transferError = 1
-        # sys.exit(transferError)
+        di.updateFileInDB(lfn, dCacheStatus="No")
+        sys.exit(transferError)
+print(f"File {lfn} successfully in dCache")
+di.updateFileInDB(lfn, dCacheStatus="Yes", dCacheTime=time.ctime())
 
-# Submit transfer to Antares here (works!)
-transf = fts3.new_transfer(dFile, tapeFile)
-job = fts3.new_job(transfers=[transf], overwrite=True, verify_checksum=True, reuse=False, retry=0) # To avoid deleted files snarling up the system for hours
-context = fts3.Context(ftsServ)
-ftsJobID = fts3.submit(context, job, delegation_lifetime=fts3.timedelta(hours=72))
-print(ftsJobID)
+# # Submit transfer to Antares here (works!)
+# transf = fts3.new_transfer(dFile, tapeFile)
+# job = fts3.new_job(transfers=[transf], overwrite=True, verify_checksum=True, reuse=False, retry=0) # To avoid deleted files snarling up the system for hours
+# context = fts3.Context(miConf.ftsServ)
+# ftsJobID = fts3.submit(context, job, delegation_lifetime=fts3.timedelta(hours=72))
+# di.updateFileInDB(lfn, AntStatus="Submitted", MigStatus="No", AntFTSID=ftsJobID)
