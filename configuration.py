@@ -33,5 +33,8 @@ class miConf:
             min, sec = divmod(timeleft, 60)
             hour, min = divmod(min, 60)
             print(f"Time left : {hour}h, {min}m, {sec}s")
+            if timeleft < 1000: # seconds ... so 15 minutes
+                print("You really need to renew the proxy.")
+                return -2
             return -1
         return 0

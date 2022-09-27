@@ -9,8 +9,10 @@ class transferProducer:
     def __init__(self):
         # Get it out of the way
         status = miConf.checkVOMSProxy()
-        if status != 0:
+        if status == -1:
             print("Alert - please renew proxy!")
+        if status == -2:
+            print("Alert - data transfers will stop soon! Production still okay.")
         self.di = mUtils()
 
     def checkDiskFlag(self):

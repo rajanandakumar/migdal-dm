@@ -7,6 +7,15 @@ from configuration import *
 
 di = mUtils()
 lfn = sys.argv[1] # "Logical file name"
+
+status = miConf.checkVOMSProxy()
+if status == -1:
+    print("Alert - please renew proxy!")
+if status == -2:
+    print("Proxy too short for transfers ... aborting")
+    sys.exit(-3)    
+
+
 mf = di.isFileInDB(lfn) # Get the record from sqlite
 
 cksum = mf.migChkSum
