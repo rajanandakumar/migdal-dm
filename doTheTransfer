@@ -24,6 +24,8 @@ dFile = miConf.dCachePath + lfn
 tapeFile = miConf.antPath + lfn
 
 print(f"Transferring {lfn} to PPD dCache ...")
+# os.system("sleep 2")
+sys.exit(0)
 
 # Transfer to dCache
 command = f"gfal-copy -v -f -K adler32:{cksum} -r -p --checksum-mode both"

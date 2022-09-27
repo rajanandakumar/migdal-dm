@@ -19,7 +19,7 @@ if status[0] == 0:
         print("Alert - please renew proxy!")
 
     # Write the information to the database
-    tp.writeTransferList(dFull)
+    # tp.writeTransferList(dFull)
 
 # This will try to transfer all outstanding stuff.
 tc.transferToPPDdCache()
