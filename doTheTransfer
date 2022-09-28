@@ -24,8 +24,6 @@ dFile = miConf.dCachePath + lfn
 tapeFile = miConf.antPath + lfn
 
 print(f"Transferring {lfn} to PPD dCache ...")
-# os.system("sleep 2")
-sys.exit(0)
 
 # Transfer to dCache
 command = f"gfal-copy -v -f -K adler32:{cksum} -r -p --checksum-mode both"
@@ -41,10 +39,3 @@ for aa in theInfo:
         sys.exit(transferError)
 print(f"File {lfn} successfully in dCache")
 di.updateFileInDB(lfn, dCacheStatus="Yes", dCacheTime=time.ctime())
-
-# # Submit transfer to Antares here (works!)
-# transf = fts3.new_transfer(dFile, tapeFile)
-# job = fts3.new_job(transfers=[transf], overwrite=True, verify_checksum=True, reuse=False, retry=0) # To avoid deleted files snarling up the system for hours
-# context = fts3.Context(miConf.ftsServ)
-# ftsJobID = fts3.submit(context, job, delegation_lifetime=fts3.timedelta(hours=72))
-# di.updateFileInDB(lfn, AntStatus="Submitted", MigStatus="No", AntFTSID=ftsJobID)

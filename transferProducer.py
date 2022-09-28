@@ -34,6 +34,7 @@ class transferProducer:
 
         kount = 0
         for tFile in tFiles:
+            if tFile.endswith(miConf.magicStart): continue
             if len(tFile) < 10: continue
             if os.path.isdir(tFile): continue
             if not os.access(tFile, os.R_OK):

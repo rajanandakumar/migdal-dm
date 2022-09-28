@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os, sys, time, glob, subprocess
+import os, sys, time, glob, shutil, subprocess
 from db_interface import *
 from configuration import *
 from threading import Thread
@@ -17,21 +17,49 @@ class transferConsumer:
             print("Alert - data transfers will stop soon!")
         self.di = mUtils()
         self.maxThreads = 1
+        self.transfersDirty = False
 
-    def transferToPPDdCache(self):
+    def transferToPPDdCache(self, disk="", cleanUp=False):
         # Get the list of files to transfer
-        for disk in miConf.disks:
-            mlfn = self.di.s.query(mig_db).filter(mig_db.migDCacheStatus=="No",
-                mig_db.migDisk==disk).all()
-            self.filesToTransfer.extend(mlfn)
-            print(disk, len(mlfn))
+        if len(disk) > 0:
+            print(f"Looking for files in {disk}")
+            self.getFilesToTransfer(disk)
+        else:
+            print(f"Looking for files in all disks")
+            for ldisk in miConf.disks:
+                print(f"-- looking at disk {ldisk}")
+                self.getFilesToTransfer(ldisk)
 
-        print(len(self.filesToTransfer))
+        print(f"Looking at transferring {len(self.filesToTransfer)} files using {self.maxThreads} threads")
         for i in range(self.maxThreads):
-            # self.transferOneFile(self,file)
-            thread = Thread(target=self.transferOneFile, args=())
-            thread.start()
+            thread = Thread(target=self.transferOneFile, args=()) # Define the transfer
+            thread.start() # Start the transfer
+            thread.join() # Wait until the threads finish before going forward
 
+        if not self.transfersDirty:
+            # Transfers all finished cleanly. Clean up the disk.
+            if len(disk) > 0: # Only if this is called for a specific disk
+                print(f"Ready to clean disk {disk}")
+                cDirs = os.listdir("/" + disk) # File / directory names to be removed
+                prefix = "/" + disk + "/"
+                for dirToClean in cDirs:
+                    dCl = prefix + dirToClean # Full path name
+                    print(f"Cleaning up {dCl}")
+                    if os.path.isdir(dCl):
+                        shutil.rmtree(dCl) # Remove the directory tree
+                    elif os.path.isfile(dCl):
+                        os.unlink(dCl)
+                    else:
+                        print(f"Unknown file type : {dCl}. Cannot remove?")
+                    
+                open(prefix + miConf.magicFinish, 'a').close() # Set the ReadyForData flag
+
+    def getFilesToTransfer(self, disk):
+        # Query sqlite for the given disk
+        mlfn = self.di.s.query(mig_db).filter(mig_db.migDCacheStatus=="No",
+            mig_db.migDisk==disk).all()
+        self.filesToTransfer.extend(mlfn)
+        print(f"Disk {disk} has {len(mlfn)} files to transfer")
 
     def transferOneFile(self):
         while len(self.filesToTransfer) > 0:
@@ -43,4 +71,5 @@ class transferConsumer:
             runComm = subprocess.Popen(comm, shell=True, close_fds=True)
             theInfo = runComm.communicate() # Actually run the command
             if runComm.returncode != 0:
+                self.transfersDirty = True
                 print(f"Failed to transfer {lfn}. Try in next iteration.")

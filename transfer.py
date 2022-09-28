@@ -19,7 +19,12 @@ if status[0] == 0:
         print("Alert - please renew proxy!")
 
     # Write the information to the database
-    # tp.writeTransferList(dFull)
+    tp.writeTransferList(dFull)
 
-# This will try to transfer all outstanding stuff.
-tc.transferToPPDdCache()
+    # This will try to transfer all outstanding stuff in the given disk.
+    tc.transferToPPDdCache(disk=dFull)
+
+# This will try to transfer all outstanding stuff in all disks.
+# Use carefully, only if needed.
+# for disk in miConf.disks:
+#     tc.transferToPPDdCache(disk=disk)
