@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import os, sys, time, subprocess
-import fts3.rest.client as fsubmit
-import fts3.rest.client.easy as fts3
+
+sys.path.append("..")
 from db_interface import *
 from configuration import *
 
@@ -38,4 +38,5 @@ for aa in theInfo:
         di.updateFileInDB(lfn, dCacheStatus="No")
         sys.exit(transferError)
 print(f"File {lfn} successfully in dCache")
-di.updateFileInDB(lfn, dCacheStatus="Yes", dCacheTime=time.ctime())
+dCacheTime = datetime.datetime.fromtimestamp(time.time())
+di.updateFileInDB(lfn, dCacheStatus="Yes", dCacheTime=dCacheTime)

@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 
 import os, sys, time, glob, shutil, subprocess
+from threading import Thread
+
+sys.path.append("..")
 from db_interface import *
 from configuration import *
-from threading import Thread
 
 class transferConsumer:
 

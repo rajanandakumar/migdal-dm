@@ -7,11 +7,17 @@ class miConf:
     disks = ["data1", "data2", "data3", "data4/test"]
 
     # Stuff for PPD dCache
-    # protocolPPD = "gsiftp"
+    # protocolPPD = "root"
     protocolPPD = "gsiftp"
     destPPD = "mover.pp.rl.ac.uk"
     pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal-new/test"
     dCachePath = protocolPPD + "://" + destPPD + pathPPD
+
+    # Zipping information
+    # zipAlg = "bzip2"
+    # zipSuffix = ".bz2"
+    zipAlg = "gzip -9"
+    zipSuffix = ".gz"
 
     # Stuff for Tier-1 Antares
     protocolAnt = "root"

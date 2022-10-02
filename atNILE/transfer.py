@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+import sys
+
+sys.path.append("..")
 from configuration import *
 import transferProducer
 import transferConsumer

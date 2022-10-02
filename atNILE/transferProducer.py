@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 import os, sys, stat, time, glob, subprocess
+
+sys.path.append("..")
 from db_interface import *
 from configuration import *
 
@@ -51,9 +53,9 @@ class transferProducer:
                 print("ERROR - file already exists. Duplicate? How?")
 
             destLFN = miConf.dCachePath + lfn
-            if kount > 2000:
-                print("This is just a test. So, stopping here ...")
-                break
+            # if kount > 2000:
+            #     print("This is just a test. So, stopping here ...")
+            #     break
             if kount %50 == 0:
                 print(f"+{kount}")
         print(f"Finally - +{kount}")

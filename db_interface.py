@@ -1,5 +1,5 @@
-import os, time, zlib
-from sqlalchemy import Column, String, Integer
+import os, datetime, zlib
+from sqlalchemy import Column, String, DateTime, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
@@ -10,17 +10,25 @@ ftsServ = "https://lcgfts3.gridpp.rl.ac.uk:8446"
 Base = declarative_base()
 class mig_db(Base):
     __tablename__ = 'migdal_db'
+
+    # The unzipped file
     migFile = Column("File name", String(250), primary_key=True) # Should be unique
-    migSize = Column("File size", String(20), primary_key=True) # Should be unique
-    migDisk = Column("DAQ disk", String(20), primary_key=False) # disk{1..4}
-    migTime = Column("Time Stamp", String(30), nullable=False)
-    migChkSum = Column("Checksum", String(500), nullable=False)
-    migDCacheStatus = Column("In PPD dCache?", String(10), nullable=False)
-    migDCacheTime = Column("PPD dCache timestamp", String(30), nullable=False)
-    migAntStatus = Column("In Antares tape?", String(10), nullable=False)
-    migAntTime = Column("Antares timestamp", String(30), nullable=False)
-    migAntFTSID = Column("FTS ID", String(100), nullable=False)
-    migMigStatus = Column("Tape status", String(30), nullable=False)
+    migSize = Column("File size", BigInteger, default=-1, nullable=False)
+    migChkSum = Column("Checksum", String(20), default="", nullable=False)
+
+    # File information after zipping
+    migZipFile = Column("Zip File name", String(250), default="", nullable=False) # Should be unique
+    migZipSize = Column("Zip File size", BigInteger, default=-1, nullable=False)
+    migZipChkSum = Column("Zip Checksum", String(20), default="", nullable=False)
+
+    migDisk = Column("DAQ disk", String(20), default="", nullable=False) # disk{1..4} : lfn
+    migTime = Column("Time Stamp", DateTime, default=datetime.datetime(1,1,1,0,0,0), nullable=False) # for lfn
+    migDCacheStatus = Column("In PPD dCache?", String(30), default="No", nullable=False) # for lfn / lfnz
+    migDCacheTime = Column("PPD dCache timestamp", DateTime, default=datetime.datetime(1,1,1,0,0,0), nullable=False) # for lfnz
+    migAntStatus = Column("In Antares tape?", String(30), default="No", nullable=False) # for lfnz
+    migAntTime = Column("Antares timestamp", DateTime, default=datetime.datetime(1,1,1,0,0,0), nullable=False) # for lfnz
+    migAntFTSID = Column("FTS ID", String(100), default="", nullable=False) # for lfnz
+    migMigStatus = Column("Tape status", String(30), default="", nullable=False) # for lfnz
 
 def doTheSQLiteAndGetItsPointer():
     sqFile = flBase + 'sqlite_dt.db'
@@ -46,38 +54,34 @@ class mUtils:
                 print(f"Strange error ... {mlfn}")
             return False
 
-    # def db_saveStuff(self):
-    #     self.s.commit()
-
-    def addFileToDB(self, tFile, lfn, disk, dCacheStatus="No", dCacheTime="-1",
-        AntStatus="No", AntTime="-1", AntFTSID="-1", MigStatus="No"):
+    def addFileToDB(self, tFile, lfn, disk):
         newFile = mig_db(
             migFile = lfn,
             migSize = os.path.getsize(tFile),
-            migDisk = disk,
-            migTime = time.ctime(os.path.getmtime(tFile)),
             migChkSum = self.adler32sum(tFile),
-            migDCacheStatus = dCacheStatus,
-            migDCacheTime = dCacheTime,
-            migAntStatus = AntStatus,
-            migAntTime = AntTime,
-            migAntFTSID = AntFTSID,
-            migMigStatus = MigStatus)
+            migTime = datetime.datetime.fromtimestamp(os.path.getmtime(tFile)),
+            migDisk = disk)
         self.s.add(newFile)
         self.s.commit()
 
-    def updateFileInDB(self, mF, dCacheStatus="No", dCacheTime="-1",
-        AntStatus="No", AntTime="-1", AntFTSID="-1", MigStatus="No"):
+    def updateFileInDB(self, mF, lfnz="", zsiz="", zcksum="", dCacheStatus="No",
+        dCacheTime="-1", AntStatus="No", AntTime="-1", AntFTSID="-1", MigStatus="No"):
+        # Only update if variable is changed.
+        # migDisk, migSize, migTime and migChkSum are filled in when adding the record.
+        mUpdated = {}
+        if len(lfnz) > 0:
+            mUpdated["migZipFile"] = lfnz
+            mUpdated["migZipSize"] = zsiz
+            mUpdated["migZipChkSum"] = zcksum
+        if dCacheStatus != "No": mUpdated["migDCacheStatus"] = dCacheStatus
+        if type(dCacheTime) != type(""): mUpdated["migDCacheTime"] = dCacheTime
+        if AntStatus != "No": mUpdated["migAntStatus"] = AntStatus
+        if type(AntTime) != type(""): mUpdated["migAntTime"] = AntTime
+        if AntFTSID != "-1": mUpdated["migAntFTSID"] = AntFTSID
+        if MigStatus != "No": mUpdated["migMigStatus"] = MigStatus
+
         mlfn = self.s.query(mig_db).filter_by(migFile=mF)
-        mlfn.update({
-            # migFile is the key. So it is always present.
-            # migDisk, migSize, migTime and migChkSum are filled in when adding the record. They do not change
-            "migDCacheStatus" : dCacheStatus,
-            "migDCacheTime" : dCacheTime,
-            "migAntStatus" : AntStatus,
-            "migAntTime" : AntTime,
-            "migAntFTSID" : AntFTSID,
-            "migMigStatus" : MigStatus})
+        mlfn.update(mUpdated)
         self.s.commit()
 
     def adler32sum(self, filepath):
