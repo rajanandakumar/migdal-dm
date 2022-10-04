@@ -12,7 +12,6 @@ di = mUtils()
 # Files to be zipped and transferred
 mlfn = di.s.query(mig_db).filter(mig_db.migDCacheStatus=="Yes",
     mig_db.migAntFTSID==""
-    # mig_db.migZipFile==""
     ).all()
 print(len(mlfn))
 for fnn in mlfn:

@@ -4,7 +4,6 @@ import htcondor
 #
 sub = htcondor.Submit()
 
-# sub["Executable"] = "/home/ppd/nraja/scripts/Migdal/dataTransfer/onTheGrid/test.sh"
 sub["Executable"] = "test.sh"
 sub["Universe"] = "vanilla"
 sub["output"] = "output/log-$(Cluster)-$(Process)-$(SUBMIT_TIME).out" 
