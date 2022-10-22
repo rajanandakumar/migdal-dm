@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys
+import sys, datetime
 
 sys.path.append("..")
 from configuration import *
@@ -22,10 +22,16 @@ if status[0] == 0:
         print("Alert - please renew proxy!")
 
     # Write the information to the database
+    t1 = datetime.datetime.now()
     tp.writeTransferList(dFull)
+    t2 = datetime.datetime.now()
+    print(f"Time to write to the SQLiteDBs : {t2 - t1}")
 
     # This will try to transfer all outstanding stuff in the given disk.
+    t1 = datetime.datetime.now()
     tc.transferToPPDdCache(disk=dFull)
+    t2 = datetime.datetime.now()
+    print(f"Time to transfer data to PPD dCache : {t2 - t1}")
 
 # This will try to transfer all outstanding stuff in all disks.
 # Use carefully, only if needed.

@@ -4,13 +4,13 @@ class miConf:
     # Some generic stuff - primarily configuration
     magicStart = "ReadyToTransfer"
     magicFinish = "ReadyForData"
-    disks = ["data1", "data2", "data3", "data4/test"]
+    disks = ["data1", "data2", "data3", "data4"]
 
     # Stuff for PPD dCache
     # protocolPPD = "root"
     protocolPPD = "gsiftp"
     destPPD = "mover.pp.rl.ac.uk"
-    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal-new/test"
+    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/"
     dCachePath = protocolPPD + "://" + destPPD + pathPPD
 
     # Zipping information

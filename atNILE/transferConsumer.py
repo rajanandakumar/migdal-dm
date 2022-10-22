@@ -18,7 +18,7 @@ class transferConsumer:
         if status == -2:
             print("Alert - data transfers will stop soon!")
         self.di = mUtils()
-        self.maxThreads = 1
+        self.maxThreads = 5
         self.transfersDirty = False
 
     def transferToPPDdCache(self, disk="", cleanUp=False):
@@ -47,14 +47,23 @@ class transferConsumer:
                 for dirToClean in cDirs:
                     dCl = prefix + dirToClean # Full path name
                     print(f"Cleaning up {dCl}")
-                    if os.path.isdir(dCl):
-                        shutil.rmtree(dCl) # Remove the directory tree
-                    elif os.path.isfile(dCl):
-                        os.unlink(dCl)
-                    else:
-                        print(f"Unknown file type : {dCl}. Cannot remove?")
-                    
-                open(prefix + miConf.magicFinish, 'a').close() # Set the ReadyForData flag
+                    try:
+                        if os.path.isdir(dCl):
+                            shutil.rmtree(dCl) # Remove the directory tree
+                        elif os.path.isfile(dCl):
+                            os.unlink(dCl)
+                        else:
+                            print(f"Unknown file type : {dCl}. Cannot remove?")
+                    except (IOError, PermissionError, FileNotFoundError) as e:
+                        print(e)
+                        print("No permission to delete the file / directory {dCl}")
+                try:
+                    open(prefix + miConf.magicFinish, 'a').close() # Set the ReadyForData flag
+                except OSError as e:
+                    print(e)
+                    print("Funny thing happened - you probably have other errors above.")
+                    print(f"No disk space left on the disk {disk}?")
+                    print(f"Could not write the magic finish file : {prefix + miConf.magicFinish}")
 
     def getFilesToTransfer(self, disk):
         # Query sqlite for the given disk
