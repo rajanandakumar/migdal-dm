@@ -1,5 +1,6 @@
 import os
 
+
 class miConf:
     # Some generic stuff - primarily configuration
     magicStart = "ReadyToTransfer"
@@ -10,7 +11,7 @@ class miConf:
     # protocolPPD = "root"
     protocolPPD = "gsiftp"
     destPPD = "mover.pp.rl.ac.uk"
-    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/"
+    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/test"
     dCachePath = protocolPPD + "://" + destPPD + pathPPD
 
     # Zipping information
@@ -35,13 +36,15 @@ class miConf:
         for i in os.popen(cmd):
             timeleft = int(i)
 
-        if timeleft < 3600*24*2: # 2 days ...
+        if timeleft < 3600 * 24 * 2:  # 2 days ...
             min, sec = divmod(timeleft, 60)
             hour, min = divmod(min, 60)
             print(f"Time left : {hour}h, {min}m, {sec}s")
-            if timeleft < 1000: # seconds ... so 15 minutes
+            if timeleft < 1000:  # seconds ... so 15 minutes
                 print("You really need to renew the proxy.")
-                print("Hint : \n voms-proxy-init --voms gridpp:/gridpp/migdal/Role=production  --valid 168:0")
+                print(
+                    "Hint : \n voms-proxy-init --voms gridpp:/gridpp/migdal/Role=production  --valid 168:0"
+                )
                 return -2
             return -1
         return 0

@@ -33,23 +33,23 @@ class transferProducer:
         # Get the list of all files to be transferred
         # Once files are in the database, track them there and transfer them over
 
-        # # Temporary hack to be removed
-        # subDir = []
-        # if disk == "data1":
-        #     subDir = ["221021_data"]
-        #     # subDir = [ "ITO_amp" ]
-        # if disk == "data2":
-        #     subDir = ["221013_data"]
-        # if disk == "data3":
-        #     subDir = ["221017_data"]
-        #     # subDir = [ "221013_data", "darks" ]
-        # files = []
-        # for sDir in subDir:
-        #     print(f"Looking at {disk}/{sDir} ...")
-        #     tF = glob.glob("/" + disk + "/" + sDir + "/**/*", recursive=True)
-        #     files.extend(tF)
+        # Temporary hack to be removed
+        subDir = []
+        if disk == "data1":
+            subDir = ["MIG_dummy_221020T165603.TEST"]
+            # subDir = [ "ITO_amp" ]
+        if disk == "data2":
+            subDir = ["221013_data"]
+        if disk == "data3":
+            subDir = ["221017_data"]
+            # subDir = [ "221013_data", "darks" ]
+        files = []
+        for sDir in subDir:
+            print(f"Looking at {disk}/{sDir} ...")
+            tF = glob.glob("/" + disk + "/" + sDir + "/**/*", recursive=True)
+            files.extend(tF)
 
-        files = glob.glob("/" + disk + "/**/*", recursive=True)
+        # files = glob.glob("/" + disk + "/**/*", recursive=True)
         tFiles = [_ for _ in files if _.split("\\")[0]]
 
         kount = 0
@@ -65,7 +65,8 @@ class transferProducer:
                 print(f"File {tFile} exists but is not readable. Skipping.")
                 continue
             kount += 1
-            lfn = tFile.split(disk)[1]
+            # lfn = tFile.split(disk)[1]
+            lfn = self.di.addLFNDateStamp(tFile.split(disk)[1])
 
             dbRec = self.di.isFileInDB(lfn)
             if not dbRec:
