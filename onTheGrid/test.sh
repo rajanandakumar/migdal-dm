@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-WDIR="/home/ppd/nraja/scripts/Migdal/dataTransfer"
+WDIR="/opt/ppd/darkmatter/migdal/dataTransfer"
   
 echo Payload Starting - `date` 
 echo Payload Arguments: 

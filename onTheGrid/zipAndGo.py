@@ -19,8 +19,6 @@ def doTheCommand(comm):
 
 di = mUtils()
 lfn = sys.argv[1] # "Logical file name"
-# lfn = "/MIG_PMT_SPE_220815T155801.TEST/MIG_PMT_SPE_220815T155801.TEST.0000.dat"
-# lfn = "/MIG_PMT_SPE_220815T161352.TEST/MIG_PMT_SPE_220815T161352.TEST.0000.dat"
 
 status = miConf.checkVOMSProxy()
 if status == -1:
