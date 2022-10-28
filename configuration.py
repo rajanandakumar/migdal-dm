@@ -8,11 +8,12 @@ class miConf:
     disks = ["data1", "data2", "data3", "data4"]
 
     # Stuff for PPD dCache
-    # protocolPPD = "root"
-    protocolPPD = "gsiftp"
+    protocolPPD = "root"
+    # protocolPPD = "gsiftp"
     destPPD = "mover.pp.rl.ac.uk"
-    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/test"
+    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/"
     dCachePath = protocolPPD + "://" + destPPD + pathPPD
+    maxTransferThreads = 10
 
     # Zipping information
     # zipAlg = "bzip2"

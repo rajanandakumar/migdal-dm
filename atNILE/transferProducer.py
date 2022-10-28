@@ -36,12 +36,12 @@ class transferProducer:
         # Temporary hack to be removed
         subDir = []
         if disk == "data1":
-            subDir = ["MIG_dummy_221020T165603.TEST"]
+            subDir = ["221025_data"]
             # subDir = [ "ITO_amp" ]
         if disk == "data2":
             subDir = ["221013_data"]
-        if disk == "data3":
-            subDir = ["221017_data"]
+        if disk == "data4":
+            subDir = ["221027_data"]
             # subDir = [ "221013_data", "darks" ]
         files = []
         for sDir in subDir:
