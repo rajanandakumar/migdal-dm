@@ -3,9 +3,7 @@ from sqlalchemy import Column, String, DateTime, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-
-flBase = "/home/ppd/nraja/scripts/Migdal/dataTransfer/"
-ftsServ = "https://lcgfts3.gridpp.rl.ac.uk:8446"
+flBase = "/opt/ppd/darkmatter/migdal/dataTransfer/"
 
 # The sqlalchemy magic to get the link to the sqlite db (or create it if needed)
 Base = declarative_base()
