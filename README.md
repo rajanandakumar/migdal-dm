@@ -11,8 +11,8 @@ Need a virtual environment with the following packages
   - source dTransfer/bin/activate
 - We also need a voms proxy
   - Create it using "voms-proxy-init --voms gridpp:/gridpp/migdal/Role=production  --valid 168:0"
-  - Copy the proxy to <someplace> useful
-  - Set the variable using "export X509_USER_PROXY=<someplace>"
+  - Copy the proxy to ```someplace``` useful
+  - Set the variable using "export X509_USER_PROXY=```someplace```"
 
 **Directories** 
 

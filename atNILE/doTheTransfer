@@ -6,20 +6,20 @@ from db_interface import *
 from configuration import *
 
 di = mUtils()
-lfn = sys.argv[1] # "Logical file name"
+lfn = sys.argv[1]  # "Logical file name"
 
 status = miConf.checkVOMSProxy()
 if status == -1:
     print("Alert - please renew proxy!")
 if status == -2:
     print("Proxy too short for transfers ... aborting")
-    sys.exit(-3)    
+    sys.exit(-3)
 
 
-mf = di.isFileInDB(lfn) # Get the record from sqlite
+mf = di.isFileInDB(lfn)  # Get the record from sqlite
 
 cksum = mf.migChkSum
-sFile = "/" + mf.migDisk + lfn
+sFile = di.extractLocalPath(lfn, mf.migDisk)
 dFile = miConf.dCachePath + lfn
 tapeFile = miConf.antPath + lfn
 
@@ -29,7 +29,14 @@ print(f"Transferring {lfn} to PPD dCache ...")
 command = f"gfal-copy -v -f -K adler32:{cksum} -r -p --checksum-mode both"
 comm = f"{command} {sFile} {dFile}"
 di.updateFileInDB(lfn, dCacheStatus="Ongoing")
-runComm = subprocess.Popen(comm, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+runComm = subprocess.Popen(
+    comm,
+    shell=True,
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    close_fds=True,
+)
 theInfo = runComm.communicate()
 transferError = 0
 for aa in theInfo:

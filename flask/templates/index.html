@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <table>
+        <tr>
+            {% for key in mFiles[0].keys() %}
+                <th> {{ key }} </th>
+            {% endfor %}
+        </tr>
+        {% for mf in mFiles %}
+            <tr>
+                {% for key in mf.keys() %}
+                    <td> {{ mf[key] }} </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock %}- FlaskApp</title>
+    <style>
+        .post {
+            padding: 10px;
+            margin: 5px;
+            background-color: #f3f3f3
+        }
+
+        nav a {
+            color: #d64161;
+            font-size: 3em;
+            margin-left: 50px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="https://g3.dmuk.ac.uk/twiki/bin/view/Migdal/WebTopicList">Migdal</a>
+        <a href="{{ url_for('index') }}">Bookkeeping</a>
+        <p> PPD dCache prefix : xroot://mover.pp.rl.ac.uk/pnfs/pp.rl.ac.uk/data/gridpp/migdal/test </p>
+        <p> Tier-1 tape (Antares) prefix : xroot://antares.stfc.ac.uk/eos/antares/prod/migdal </p>
+ 
+    </nav>
+    <hr>
+    <div class="content">
+        {% block content %} {% endblock %}
+    </div>
+</body>
+</html>
+
