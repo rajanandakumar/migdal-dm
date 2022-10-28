@@ -11,4 +11,4 @@ echo $ldir
     echo "Running the jobs";
     python3 $ldir/transferWriteDB.py;
     deactivate;
-) 201> $ldir/migLockFile2
+) 201> $ldir/migLockFile201

@@ -11,4 +11,4 @@ echo $ldir
     echo "Running the jobs";
     python3 $ldir/transferToPPD.py;
     deactivate;
-) 202> $ldir/migLockFile2
+) 202> $ldir/migLockFile202
