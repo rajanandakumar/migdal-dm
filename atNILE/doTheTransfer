@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, sys, time, subprocess
+import os, sys, time, shutil, subprocess
 
 sys.path.append("..")
 from db_interface import *
@@ -17,17 +17,15 @@ if status == -2:
 
 
 mf = di.isFileInDB(lfn)  # Get the record from sqlite
-
 cksum = mf.migChkSum
 sFile = di.extractLocalPath(lfn, mf.migDisk)
 dFile = miConf.dCachePath + lfn
-tapeFile = miConf.antPath + lfn
 
 print(f"Transferring {lfn} to PPD dCache ...")
 
 # Transfer to dCache
 command = f"gfal-copy -v -f -K adler32:{cksum} -r -p --checksum-mode both"
-comm = f"{command} {sFile} {dFile}"
+comm = f'{command} "{sFile}" "{dFile}"'
 di.updateFileInDB(lfn, dCacheStatus="Ongoing")
 runComm = subprocess.Popen(
     comm,
@@ -42,8 +40,25 @@ transferError = 0
 for aa in theInfo:
     if "ERROR" in str(aa) or "Error" in str(aa) or "error" in str(aa):
         transferError = 1
+        print(f"Transfer error : {aa}")
         di.updateFileInDB(lfn, dCacheStatus="No")
         sys.exit(transferError)
 print(f"File {lfn} successfully in dCache")
 dCacheTime = datetime.datetime.fromtimestamp(time.time())
 di.updateFileInDB(lfn, dCacheStatus="Yes", dCacheTime=dCacheTime)
+
+try:
+    os.unlink(sFile)
+    while sFile[1:] not in miConf.disks:
+        sFile = "/".join(sFile.split("/")[:-1])
+        if os.path.isdir(sFile):
+            if sFile[1:] in miConf.disks:
+                open(sFile + "/" + miConf.magicFinish, "a").close()
+            if len(os.listdir(sFile)) == 0:
+                shutil.rmtree(sFile)
+            else:
+                break
+
+except (IOError, PermissionError, FileNotFoundError) as e:
+    print(e)
+    print("No permission to delete the file / directory {sFile}")

@@ -32,6 +32,9 @@ class transferConsumer:
             for ldisk in miConf.disks:
                 print(f"-- looking at disk {ldisk}")
                 self.getFilesToTransfer(ldisk)
+        if len(self.filesToTransfer) <= 0:
+            print("No files to transfer to PPD dCache.")
+            return
 
         print(
             f"Looking at transferring {len(self.filesToTransfer)} files using {self.maxThreads} threads"
@@ -44,39 +47,6 @@ class transferConsumer:
             thread.start()  # Start the transfer
         for thread in thList:
             thread.join()  # Wait until the threads finish before going forward
-
-        if not self.transfersDirty:
-            # Transfers all finished cleanly. Clean up the disk.
-            if len(disk) > 0:  # Only if this is called for a specific disk
-                print(f"Ready to clean disk {disk}")
-                cDirs = os.listdir("/" + disk)  # File / directory names to be removed
-                prefix = "/" + disk + "/"
-                for dirToClean in cDirs:
-                    dCl = prefix + dirToClean  # Full path name
-                    print(f"Cleaning up {dCl}")
-                    try:
-                        if os.path.isdir(dCl):
-                            shutil.rmtree(dCl)  # Remove the directory tree
-                        elif os.path.isfile(dCl):
-                            os.unlink(dCl)
-                        else:
-                            print(f"Unknown file type : {dCl}. Cannot remove?")
-                    except (IOError, PermissionError, FileNotFoundError) as e:
-                        print(e)
-                        print("No permission to delete the file / directory {dCl}")
-                try:
-                    open(
-                        prefix + miConf.magicFinish, "a"
-                    ).close()  # Set the ReadyForData flag
-                except OSError as e:
-                    print(e)
-                    print(
-                        "Funny thing happened - you probably have other errors above."
-                    )
-                    print(f"No disk space left on the disk {disk}?")
-                    print(
-                        f"Could not write the magic finish file : {prefix + miConf.magicFinish}"
-                    )
 
     def getFilesToTransfer(self, disk):
         # Query sqlite for the given disk
@@ -96,7 +66,7 @@ class transferConsumer:
                 mf.migFile
             )  # We don't want to update a sqlite object in a separate process
 
-            comm = f"python3 ./doTheTransfer {lfn}"
+            comm = f'python3 ./doTheTransfer "{lfn}"'
             runComm = subprocess.Popen(comm, shell=True, close_fds=True)
             theInfo = runComm.communicate()  # Actually run the command
             if runComm.returncode != 0:

@@ -11,15 +11,15 @@ class miConf:
     protocolPPD = "root"
     # protocolPPD = "gsiftp"
     destPPD = "mover.pp.rl.ac.uk"
-    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/"
+    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/test/"
     dCachePath = protocolPPD + "://" + destPPD + pathPPD
     maxTransferThreads = 10
 
     # Zipping information
-    # zipAlg = "bzip2"
-    # zipSuffix = ".bz2"
-    zipAlg = "gzip -9"
-    zipSuffix = ".gz"
+    zipAlg = "bzip2"
+    zipSuffix = ".bz2"
+    # zipAlg = "gzip -9"
+    # zipSuffix = ".gz"
 
     # Stuff for Tier-1 Antares
     protocolAnt = "root"
