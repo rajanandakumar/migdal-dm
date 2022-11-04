@@ -51,7 +51,7 @@ if status != 0 :
 # Zip file name, path and checksum
 sFile = fn + miConf.zipSuffix # Assume name is in this format
 lfnz = lfn + miConf.zipSuffix
-zFile = miConf.dCachePath + lfn + miConf.zipSuffix
+zFile = miConf.dCachePath + lfnz
 cksum = di.adler32sum(sFile)
 
 # Upload the zipped file to dCache

@@ -21,7 +21,7 @@ cksum = mf.migChkSum
 sFile = di.extractLocalPath(lfn, mf.migDisk)
 dFile = miConf.dCachePath + lfn
 
-print(f"Transferring {lfn} to PPD dCache ...")
+print(f"Transferring {sFile} to PPD dCache ...{dFile}")
 
 # Transfer to dCache
 command = f"gfal-copy -v -f -K adler32:{cksum} -r -p --checksum-mode both"

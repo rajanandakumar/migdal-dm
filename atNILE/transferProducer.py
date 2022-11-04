@@ -19,12 +19,13 @@ class transferProducer:
 
     def checkDiskFlag(self):
         for disk in miConf.disks:
+            print(f"Looking at {disk}")
             fMagic = "/" + disk + "/" + miConf.magicStart
             if os.path.isfile(fMagic):
                 print("Found magic file", fMagic)
                 return (0, disk)
-            # if disk == "data2": # Temporary hack as disk2 is full and we cannot
-            #     return(0, disk) # even create an empty file!
+            if disk == "data4/221103":  # Temporary hack as we do not have write
+                return (0, disk)  # access in midaq directories
         print("No magic file found. Back to sleep")
         return (1, 0)
 
@@ -33,23 +34,23 @@ class transferProducer:
         # Get the list of all files to be transferred
         # Once files are in the database, track them there and transfer them over
 
-        # Temporary hack to be removed
-        subDir = []
-        if disk == "data1":
-            subDir = ["221025_data"]
-            # subDir = [ "ITO_amp" ]
-        if disk == "data2":
-            subDir = ["221013_data"]
-        if disk == "data4":
-            subDir = ["221027_data"]
-            # subDir = [ "221013_data", "darks" ]
-        files = []
-        for sDir in subDir:
-            print(f"Looking at {disk}/{sDir} ...")
-            tF = glob.glob("/" + disk + "/" + sDir + "/**/*", recursive=True)
-            files.extend(tF)
+        # # Temporary hack to be removed
+        # subDir = []
+        # if disk == "data1":
+        #     subDir = ["221025_data"]
+        #     # subDir = [ "ITO_amp" ]
+        # if disk == "data2":
+        #     subDir = ["221013_data"]
+        # if disk == "data4":
+        #     subDir = ["221027_data"]
+        #     # subDir = [ "221013_data", "darks" ]
+        # files = []
+        # for sDir in subDir:
+        #     print(f"Looking at {disk}/{sDir} ...")
+        #     tF = glob.glob("/" + disk + "/" + sDir + "/**/*", recursive=True)
+        #     files.extend(tF)
 
-        # files = glob.glob("/" + disk + "/**/*", recursive=True)
+        files = glob.glob("/" + disk + "/**/*", recursive=True)
         tFiles = [_ for _ in files if _.split("\\")[0]]
 
         kount = 0
