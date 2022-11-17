@@ -5,14 +5,15 @@ class miConf:
     # Some generic stuff - primarily configuration
     magicStart = "ReadyToTransfer"
     magicFinish = "ReadyForData"
-    disks = ["data1", "data2", "data3", "data4", "data4/221103"]
-    # disks = ["data1", "data2", "data3", "data4", "data1/test2"]
+    # disks = ["data1", "data2", "data3", "data4", "data3/MIG_Fe55_221108T134559.CAL"]
+    # disks = ["data1", "data2", "data3", "data4", "data3/MIG_Fe55_221108T141905.CAL"]
+    disks = ["data1", "data2", "data3", "data4"]
 
     # Stuff for PPD dCache
     protocolPPD = "root"
     # protocolPPD = "gsiftp"
     destPPD = "mover.pp.rl.ac.uk"
-    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/"
+    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/test"
     dCachePath = protocolPPD + "://" + destPPD + pathPPD
     maxTransferThreads = 10
 
@@ -44,9 +45,7 @@ class miConf:
             print(f"Time left : {hour}h, {min}m, {sec}s")
             if timeleft < 1000:  # seconds ... so 15 minutes
                 print("You really need to renew the proxy.")
-                print(
-                    "Hint : \n voms-proxy-init --voms gridpp:/gridpp/migdal/Role=production  --valid 168:0"
-                )
+                print("Hint : \n voms-proxy-init --voms gridpp:/gridpp/migdal/Role=production  --valid 168:0")
                 return -2
             return -1
         return 0
