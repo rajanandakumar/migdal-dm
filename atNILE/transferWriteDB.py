@@ -9,6 +9,7 @@ from configuration import *
 import transferProducer
 import transferConsumer
 
+print(datetime.datetime.now())
 tp = transferProducer.transferProducer()
 
 # First up - check if there is a disk to be transferred

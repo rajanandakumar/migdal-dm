@@ -8,7 +8,7 @@ echo $ldir
     # commands executed under lock 
     source $ldir/../dTransfer/bin/activate;
     cd $ldir;
-    echo "Running the jobs";
+    echo "Writing the job list to the database";
     python3 $ldir/transferWriteDB.py;
     deactivate;
 ) 201> $ldir/migLockFile201

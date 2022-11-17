@@ -8,7 +8,7 @@ echo $ldir
     # commands executed under lock 
     source $ldir/../dTransfer/bin/activate;
     cd $ldir;
-    echo "Running the jobs";
+    echo "Transferring any found file to PPD dCache";
     python3 $ldir/transferToPPD.py;
     deactivate;
 ) 202> $ldir/migLockFile202

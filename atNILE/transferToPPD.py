@@ -11,10 +11,17 @@ tc = transferConsumer.transferConsumer()
 
 # This will try to transfer all outstanding stuff in all disks.
 # Use carefully, only if needed.
-for disk in miConf.disks:
-    print(f"Looking at dist {disk}")
-    t1 = datetime.datetime.now()
-    tc.transferToPPDdCache(disk=disk)
-    t2 = datetime.datetime.now()
-    print(f"Time to transfer data from {disk} to PPD dCache : {t2 - t1}")
+print(datetime.datetime.now())
+
+t1 = datetime.datetime.now()
+tc.transferToPPDdCache()
+t2 = datetime.datetime.now()
+print(f"Time this transfer process (to dCache) to run : {t2 - t1}")
+
+# for disk in miConf.disks:
+#     print(f"Looking at disk {disk}")
+#     t1 = datetime.datetime.now()
+#     tc.transferToPPDdCache(disk=disk)
+#     t2 = datetime.datetime.now()
+#     print(f"Time to transfer data from {disk} to PPD dCache : {t2 - t1}")
 print("All done!")

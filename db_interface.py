@@ -3,6 +3,7 @@ from sqlalchemy import Column, String, DateTime, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+
 flBase = "/opt/ppd/darkmatter/migdal/dataTransfer/"
 
 # The sqlalchemy magic to get the link to the sqlite db (or create it if needed)
@@ -55,7 +56,7 @@ class mig_db(Base):
 
 def doTheSQLiteAndGetItsPointer():
     sqFile = flBase + "sqlite_dt.db"
-    engine = create_engine("sqlite:///" + sqFile)
+    engine = create_engine("sqlite:///" + sqFile, connect_args={'timeout': 15})
     # Should run only the first time
     if not os.path.exists(sqFile):
         Base.metadata.create_all(engine)
@@ -81,7 +82,7 @@ class mUtils:
         newFile = mig_db(
             migFile=lfn,
             migSize=os.path.getsize(tFile),
-            migChkSum=self.adler32sum(tFile),
+            # migChkSum=self.adler32sum(tFile),
             migTime=datetime.datetime.fromtimestamp(os.path.getmtime(tFile)),
             migDisk=disk,
         )
@@ -91,6 +92,7 @@ class mUtils:
     def updateFileInDB(
         self,
         mF,
+        cksum="",
         lfnz="",
         zsiz="",
         zcksum="",
@@ -104,6 +106,8 @@ class mUtils:
         # Only update if variable is changed.
         # migDisk, migSize, migTime and migChkSum are filled in when adding the record.
         mUpdated = {}
+        if len(cksum) > 0:
+            mUpdated["migChkSum"] = cksum
         if len(lfnz) > 0:
             mUpdated["migZipFile"] = lfnz
             mUpdated["migZipSize"] = zsiz

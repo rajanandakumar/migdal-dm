@@ -24,65 +24,60 @@ class transferProducer:
             if os.path.isfile(fMagic):
                 print("Found magic file", fMagic)
                 return (0, disk)
-            if disk == "data4/221103":  # Temporary hack as we do not have write
-                return (0, disk)  # access in midaq directories
+            # Hack as we do not yet have write access in midaq directories
+            if len(disk) > 5 and len(disk.split("/")) > 1:
+                return (0, disk)
         print("No magic file found. Back to sleep")
         return (1, 0)
 
     def writeTransferList(self, disk):
-        print("Looking at disk : ", disk)
+        self.disk = disk
+        print("Looking at disk : ", self.disk)
+
         # Get the list of all files to be transferred
         # Once files are in the database, track them there and transfer them over
-
-        # # Temporary hack to be removed
-        # subDir = []
-        # if disk == "data1":
-        #     subDir = ["221025_data"]
-        #     # subDir = [ "ITO_amp" ]
-        # if disk == "data2":
-        #     subDir = ["221013_data"]
-        # if disk == "data4":
-        #     subDir = ["221027_data"]
-        #     # subDir = [ "221013_data", "darks" ]
-        # files = []
-        # for sDir in subDir:
-        #     print(f"Looking at {disk}/{sDir} ...")
-        #     tF = glob.glob("/" + disk + "/" + sDir + "/**/*", recursive=True)
-        #     files.extend(tF)
-
-        files = glob.glob("/" + disk + "/**/*", recursive=True)
+        if "MIG" in disk:
+            files = glob.glob("/" + disk + "/**/*", recursive=True)
+        else:
+            files = glob.glob("/" + disk + "/MIG_*/**/*", recursive=True)
         tFiles = [_ for _ in files if _.split("\\")[0]]
 
-        kount = 0
-        for tFile in tFiles:
-            if tFile.endswith(miConf.magicStart):
-                continue
-            if len(tFile) < 10:
-                continue
-            if os.path.isdir(tFile):
-                continue
-            if not os.access(tFile, os.R_OK):
-                # os.chmod(tFile, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
-                print(f"File {tFile} exists but is not readable. Skipping.")
-                continue
-            kount += 1
-            # lfn = tFile.split(disk)[1]
-            lfn = self.di.addLFNDateStamp(tFile.split(disk)[1])
+        self.kount = 0
+        if len(tFiles) == 0:
+            print("Transfer flag set, but found no files to transfer?")
+        else:
+            for tFile in tFiles:
+                self.checkAndAddFileToDB(tFile)
 
-            dbRec = self.di.isFileInDB(lfn)
-            if not dbRec:
-                self.di.addFileToDB(tFile, lfn, disk)
-            else:
-                print("ERROR - file already exists. Duplicate? How?")
-
-            destLFN = miConf.dCachePath + lfn
-            if kount % 50 == 0:
-                print(f"+{kount}")
-        print(f"Finally - +{kount}")
+        print(f"Finally - +{self.kount}")
+        if len(self.disk) > 5 and len(self.disk.split("/")) > 1:
+            print(f"No magic start file to remove ...")
+            return
         print(f"Removing the magic start file")
-        fMagic = "/" + disk + "/" + miConf.magicStart
+        fMagic = "/" + self.disk + "/" + miConf.magicStart
         try:
             os.unlink(fMagic)
         except FileNotFoundError as e:
-            print(e)
             print("Some hack in place? File {miConf.magicStart} not found.")
+
+    def checkAndAddFileToDB(self, tFile):
+        if len(tFile) < 10 or tFile.endswith(miConf.magicStart):
+            return
+        if os.path.isdir(tFile):
+            return
+        if not os.access(tFile, os.R_OK):
+            # os.chmod(tFile, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+            print(f"File {tFile} exists but is not readable. Skipping.")
+            return
+
+        lfn = self.di.addLFNDateStamp(tFile.split(self.disk)[1])
+        dbRec = self.di.isFileInDB(lfn)
+
+        if not dbRec:
+            self.di.addFileToDB(tFile, lfn, self.disk)
+        else:
+            print("ERROR - file already exists. Duplicate? How?")
+
+        self.kount = self.kount + 1
+        if self.kount % 50 == 0:
+            print(f"+{self.kount}")
