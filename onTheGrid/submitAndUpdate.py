@@ -45,7 +45,7 @@ for fnn in mlfn:
         antTime = datetime.datetime.strptime(ftsStat["job_finished"], "%Y-%m-%dT%H:%M:%S")
         di.updateFileInDB(lfn, AntStatus="Yes", AntTime=antTime)
 
-# Has the file been migrated to tape?
+# Has the file been migrated to tape? Clean it.
 mlfn = []
 if miConf.cleanUpUnzipped:
     mlfn = (
