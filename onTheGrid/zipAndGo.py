@@ -3,9 +3,14 @@ import os, sys, time, subprocess
 import fts3.rest.client as fsubmit
 import fts3.rest.client.easy as fts3
 
-sys.path.append("..")
+cwd = os.getcwd()
+print(f"Current working directory : {cwd}")
+os.chdir(os.environ["MIG_DIR"])
+sys.path.append(".")
 from db_interface import *
 from configuration import *
+
+os.chdir(cwd)
 
 
 def doTheCommand(comm):
@@ -42,9 +47,10 @@ print(f"Downloading and b-zipping {dFile} from PPD dCache ...")
 
 # Copy from dCache
 di.updateFileInDB(lfn, dCacheStatus="Zipping")
-fn = os.path.basename(dFile)
+localPath = os.environ["_CONDOR_JOB_IWD"]
+fn = f"{localPath}/{os.path.basename(dFile)}"
 dn = os.path.dirname(dFile)
-command = f"cp {dFile} ."
+command = f"cp {dFile} {fn}"
 status = doTheCommand(command)
 if status != 0:
     print(f"Error getting file {dFile} from dCache. Exiting")

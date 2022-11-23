@@ -5,19 +5,30 @@ class miConf:
     # Some generic stuff - primarily configuration
     magicStart = "ReadyToTransfer"
     magicFinish = "ReadyForData"
-    # disks = ["data1", "data2", "data3", "data4", "data3/MIG_Fe55_221108T134559.CAL"]
-    # disks = ["data1", "data2", "data3", "data4", "data3/MIG_Fe55_221108T141905.CAL"]
     disks = ["data1", "data2", "data3", "data4"]
+
+    # Flag to control if we delete unzipped file on dCache after file has been
+    # migrated to tape
+    cleanUpUnzipped = False
 
     # Stuff for PPD dCache
     protocolPPD = "root"
     # protocolPPD = "gsiftp"
     destPPD = "mover.pp.rl.ac.uk"
+    # destPPD = "heplns140.pp.rl.ac.uk"
+
+    portPPD = ""
+    if protocolPPD == "root":
+        portPPD = "1094"
+
+    if len(portPPD) > 2:
+        destPPD = destPPD + ":" + portPPD
+
     pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/test"
     dCachePath = protocolPPD + "://" + destPPD + pathPPD
-    maxTransferThreads = 10
+    maxTransferThreads = 5
 
-    # Zipping information
+    # Zipping algorithm and file suffix
     zipAlg = "bzip2"
     zipSuffix = ".bz2"
     # zipAlg = "gzip -9"
@@ -26,7 +37,7 @@ class miConf:
     # Stuff for Tier-1 Antares
     protocolAnt = "root"
     destAnt = "antares.stfc.ac.uk"
-    pathAnt = "/eos/antares/prod/migdal"
+    pathAnt = "/eos/antares/prod/migdal/test"
     antPath = protocolAnt + "://" + destAnt + pathAnt
 
     # FTS server we use.

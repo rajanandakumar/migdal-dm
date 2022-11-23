@@ -30,18 +30,14 @@ class mig_db(Base):
         default=datetime.datetime(1, 1, 1, 0, 0, 0),
         nullable=False,
     )  # For lfn
-    migDCacheStatus = Column(
-        "In PPD dCache?", String(30), default="No", nullable=False
-    )  # for lfn / lfnz
+    migDCacheStatus = Column("In PPD dCache?", String(30), default="No", nullable=False)  # for lfn / lfnz
     migDCacheTime = Column(
         "PPD dCache timestamp",
         DateTime,
         default=datetime.datetime(1, 1, 1, 0, 0, 0),
         nullable=False,
     )  # for lfnz
-    migAntStatus = Column(
-        "In Antares tape?", String(30), default="No", nullable=False
-    )  # for lfnz
+    migAntStatus = Column("In Antares tape?", String(30), default="No", nullable=False)  # for lfnz
     migAntTime = Column(
         "Antares timestamp",
         DateTime,
@@ -49,14 +45,12 @@ class mig_db(Base):
         nullable=False,
     )  # for lfnz
     migAntFTSID = Column("FTS ID", String(100), default="", nullable=False)  # for lfnz
-    migMigStatus = Column(
-        "Tape status", String(30), default="", nullable=False
-    )  # for lfnz
+    migMigStatus = Column("Tape status", String(30), default="", nullable=False)  # for lfnz
 
 
 def doTheSQLiteAndGetItsPointer():
     sqFile = flBase + "sqlite_dt.db"
-    engine = create_engine("sqlite:///" + sqFile, connect_args={'timeout': 15})
+    engine = create_engine("sqlite:///" + sqFile, connect_args={"timeout": 60})
     # Should run only the first time
     if not os.path.exists(sqFile):
         Base.metadata.create_all(engine)

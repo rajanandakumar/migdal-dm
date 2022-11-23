@@ -10,27 +10,18 @@ import testJob
 di = mUtils()
 
 # Files to be zipped and transferred
-mlfn = (
-    di.s.query(mig_db)
-    .filter(mig_db.migDCacheStatus == "Yes", mig_db.migAntFTSID == "")
-    .all()
-)
+mlfn = di.s.query(mig_db).filter(mig_db.migDCacheStatus == "Yes", mig_db.migAntFTSID == "").all()
 kount = 0
+cluster_id = []
 for fnn in mlfn:
     kount = kount + 1
-    # # For now transfer only 100MB or larger files
-    # if fnn.migSize < 100 * 1024 * 1024:
-    #     continue
-    # Submit the job to be zipped
-    # comm = f'python3 zipAndGo.py "{fnn.migFile}"'
-    # time.sleep(1.0)
-    # print(fnn.migFile, fnn.migSize)
     testJob.sub["Arguments"] = fnn.migFile
     with testJob.schedd.transaction() as txn:
-        cluster_id = testJob.sub.queue(txn)
-    # print(cluster_id)
-    # if kount > 10:
-    #     break
+        cluster_id.append(testJob.sub.queue(txn))
+    # Submitting 30 jobs every 10 minutes should be more than enough
+    if kount > 30:
+        break
+print(f"Jobs sucmitted to condor : {cluster_id}")
 
 # Have the files been transferred to Antares?
 mlfn = (
@@ -51,21 +42,23 @@ for fnn in mlfn:
     context = fts3.Context(miConf.ftsServ)
     ftsStat = fts3.get_job_status(context, ftsID)
     if ftsStat["job_state"] == "FINISHED":
-        antTime = datetime.datetime.strptime(
-            ftsStat["job_finished"], "%Y-%m-%dT%H:%M:%S"
-        )
+        antTime = datetime.datetime.strptime(ftsStat["job_finished"], "%Y-%m-%dT%H:%M:%S")
         di.updateFileInDB(lfn, AntStatus="Yes", AntTime=antTime)
 
 # Has the file been migrated to tape?
-mlfn = (
-    di.s.query(mig_db)
-    .filter(
-        mig_db.migDCacheStatus == "Yes",
-        mig_db.migAntStatus == "Yes",
-        mig_db.migMigStatus == "",
+mlfn = []
+if miConf.cleanUpUnzipped:
+    mlfn = (
+        di.s.query(mig_db)
+        .filter(
+            mig_db.migDCacheStatus == "Yes",
+            mig_db.migAntStatus == "Yes",
+            mig_db.migMigStatus == "",
+        )
+        .all()
     )
-    .all()
-)
+# If the flag "cleanUpUnzipped" is not set, mlfn is empty. So,
+# cleaning will not take place.
 for fnn in mlfn:
     lfn = fnn.migFile
     lfnz = fnn.migZipFile

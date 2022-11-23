@@ -37,7 +37,7 @@ dFile = miConf.dCachePath + lfn
 print(f"Transferring {sFile} to PPD dCache ...{dFile}")
 
 # Transfer to dCache
-command = f"gfal-copy -v -f -K adler32:{cksum} -p --checksum-mode both"
+command = f"gfal-copy -v -f -p --checksum-mode both"
 comm = f'{command} "{sFile}" "{dFile}"'
 di.updateFileInDB(lfn, dCacheStatus="Ongoing")
 theInfo = runTheCommand(comm)
@@ -73,7 +73,7 @@ try:
                     if empty:
                         magicFile = sFile + "/" + miConf.magicFinish
                         open(magicFile, "a").close()
-                        os.chmod(magicFile, stat.S_IWUSR | stat.S_IWGRP)
+                        os.chmod(magicFile, stat.S_IWUSR | stat.S_IWGRP | stat.S_IRUSR | stat.S_IRGRP)
                         shutil.chown(magicFile, user="nraja", group="midaq")
                         print("Wrote Magic finish file")
             elif len(os.listdir(sFile)) == 0:

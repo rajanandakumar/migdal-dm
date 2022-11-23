@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 ldir=$( dirname -- "$( readlink -f -- "$0"; )"; )
-echo $ldir
+echo `date`
 
 (
     flock -n 203 || exit 1
