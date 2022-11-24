@@ -18,7 +18,7 @@ for fnn in mlfn:
     testJob.sub["Arguments"] = fnn.migFile
     with testJob.schedd.transaction() as txn:
         cluster_id.append(testJob.sub.queue(txn))
-    # Submitting 30 jobs every 10 minutes should be more than enough
+    # Submitting 30 jobs every iteration (10 minutes?) should be more than enough
     if kount > 30:
         break
 print(f"Jobs sucmitted to condor : {cluster_id}")

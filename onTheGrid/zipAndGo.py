@@ -47,13 +47,17 @@ print(f"Downloading and b-zipping {dFile} from PPD dCache ...")
 
 # Copy from dCache
 di.updateFileInDB(lfn, dCacheStatus="Zipping")
-localPath = os.environ["_CONDOR_JOB_IWD"]
+localPath = "/tmp"
+if "_CONDOR_JOB_IWD" in os.environ.keys():
+    localPath = os.environ["_CONDOR_JOB_IWD"]
+
 fn = f"{localPath}/{os.path.basename(dFile)}"
 dn = os.path.dirname(dFile)
 command = f"cp {dFile} {fn}"
 status = doTheCommand(command)
 if status != 0:
     print(f"Error getting file {dFile} from dCache. Exiting")
+    di.updateFileInDB(lfn, dCacheStatus="Yes")
     sys.exit(-1)
 
 # Zip with the algorithm defined in the configuration
@@ -61,6 +65,7 @@ command = f"{miConf.zipAlg} {fn}"
 status = doTheCommand(command)
 if status != 0:
     print(f"Error zipping file {fn}? Exiting")
+    di.updateFileInDB(lfn, dCacheStatus="Yes")
     sys.exit(-2)
 
 # Zip file name, path and checksum
@@ -77,6 +82,7 @@ comm = f"{command} {sFile} {zFile}"
 status = doTheCommand(comm)
 if status != 0:
     print(f"Error uploading zipped file {fn}? Exiting")
+    di.updateFileInDB(lfn, dCacheStatus="Yes")
     sys.exit(-2)
 print(f"File {lfn} successfully in dCache")
 dCacheTime = datetime.datetime.fromtimestamp(time.time())
