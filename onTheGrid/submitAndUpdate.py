@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import os, sys, time, subprocess
 import fts3.rest.client.easy as fts3
-import fts3.rest.client.exceptions
+import fts3.rest.client.exceptions.NotFound as NotFound
 
 sys.path.append("..")
 from db_interface import *
@@ -43,7 +43,7 @@ for fnn in mlfn:
     context = fts3.Context(miConf.ftsServ)
     try:
         ftsStat = fts3.get_job_status(context, ftsID)
-    except fts3.rest.client.exceptions.NotFound:
+    except NotFound:
         print(f"FTS job {ftsID} missing. Resubmit job")
         zFile = fnn.migZipFile
         tapeFile = miConf.antPath + lfn + miConf.zipSuffix
@@ -51,7 +51,6 @@ for fnn in mlfn:
         job = fts3.new_job(
             transfers=[transf], overwrite=True, verify_checksum=True, reuse=False, retry=5
         )  # To avoid deleted files snarling up the system for hours
-        context = fts3.Context(miConf.ftsServ)
         ftsJobID = fts3.submit(context, job, delegation_lifetime=fts3.timedelta(hours=72))
         di.updateFileInDB(lfn, AntStatus="Submitted", MigStatus="No", AntFTSID=ftsJobID)
 
