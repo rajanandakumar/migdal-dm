@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import os, sys, time, subprocess
 import fts3.rest.client.easy as fts3
-import fts3.rest.client.exceptions.NotFound as NotFound
+frin fts3.rest.client.exceptions import NotFound
 
 sys.path.append("..")
 from db_interface import *
