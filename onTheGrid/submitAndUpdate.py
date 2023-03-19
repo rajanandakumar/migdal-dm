@@ -48,12 +48,10 @@ for fnn in mlfn:
         zFile = fnn.migZipFile
         tapeFile = miConf.antPath + lfn + miConf.zipSuffix
         transf = fts3.new_transfer(zFile, tapeFile)
-        job = fts3.new_job(
-            transfers=[transf], overwrite=True, verify_checksum=True, reuse=False, retry=5
-        )  # To avoid deleted files snarling up the system for hours
+        job = fts3.new_job(transfers=[transf], overwrite=True, verify_checksum=True, reuse=False, retry=5)
         ftsJobID = fts3.submit(context, job, delegation_lifetime=fts3.timedelta(hours=72))
         di.updateFileInDB(lfn, AntStatus="Submitted", MigStatus="No", AntFTSID=ftsJobID)
-
+        continue
     if ftsStat["job_state"] == "FINISHED":
         antTime = datetime.datetime.strptime(ftsStat["job_finished"], "%Y-%m-%dT%H:%M:%S")
         di.updateFileInDB(lfn, AntStatus="Yes", AntTime=antTime)
