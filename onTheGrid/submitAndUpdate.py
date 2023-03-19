@@ -36,6 +36,8 @@ mlfn = (
     .all()
 )
 
+print(f"Checking {len(mlfn)} files ...")
+
 # Has the FTS transfer to Antares finished successfully?
 for fnn in mlfn:
     lfn = fnn.migFile
