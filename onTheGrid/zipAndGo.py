@@ -46,10 +46,10 @@ dFile = miConf.pathPPD + lfn
 print(f"Downloading and b-zipping {dFile} from PPD dCache ...")
 
 # Copy from dCache
-di.updateFileInDB(lfn, dCacheStatus="Zipping")
 localPath = "/tmp"
 if "_CONDOR_JOB_IWD" in os.environ.keys():
     localPath = os.environ["_CONDOR_JOB_IWD"]
+    os.chdir(localPath)
 
 fn = f"{localPath}/{os.path.basename(dFile)}"
 dn = os.path.dirname(dFile)
@@ -59,6 +59,7 @@ if status != 0:
     print(f"Error getting file {dFile} from dCache. Exiting")
     di.updateFileInDB(lfn, dCacheStatus="Yes")
     sys.exit(-1)
+di.updateFileInDB(lfn, dCacheStatus="Zipping")
 
 # Zip with the algorithm defined in the configuration
 command = f"{miConf.zipAlg} {fn}"

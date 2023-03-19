@@ -6,6 +6,8 @@ class miConf:
     magicStart = "ReadyToTransfer"
     magicFinish = "ReadyForData"
     disks = ["data1", "data2", "data3", "data4"]
+    # disks = ["data1", "data2", "data3", "data4", "data2/221220", "data1/221220", "data3/221221"]
+    # disks = ["data1", "data2", "data3", "data4", "data2/230113"]
 
     # Flag to control if we delete unzipped file on dCache after file has been
     # migrated to tape
@@ -24,7 +26,7 @@ class miConf:
     if len(portPPD) > 2:
         destPPD = destPPD + ":" + portPPD
 
-    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/test"
+    pathPPD = "/pnfs/pp.rl.ac.uk/data/gridpp/migdal/"
     dCachePath = protocolPPD + "://" + destPPD + pathPPD
     maxTransferThreads = 5
 

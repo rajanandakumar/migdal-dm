@@ -24,15 +24,25 @@ class transferProducer:
             if os.path.isfile(fMagic):
                 print("Found magic file", fMagic)
                 return (0, disk)
-            # Hack as we do not yet have write access in midaq directories
-            if len(disk) > 5 and len(disk.split("/")) > 1:
-                return (0, disk)
+            # # Hack as we do not yet have write access in midaq directories
+            # if len(disk) > 5 and len(disk.split("/")) > 1:
+            #     return (0, disk)
         print("No magic file found. Back to sleep")
         return (1, 0)
+
+    def remove_empty_folders(self, path_abs):
+        walk = list(os.walk(path_abs, topdown=False))
+        for path, _, _ in walk[::-1]:
+            if len(os.listdir(path)) == 0:
+                os.rmdir(path)
+
 
     def writeTransferList(self, disk):
         self.disk = disk
         print("Looking at disk : ", self.disk)
+
+        # First clean up the disk of empty directories
+        self.remove_empty_folders(self.disk)
 
         # Get the list of all files to be transferred
         # Once files are in the database, track them there and transfer them over
@@ -50,9 +60,9 @@ class transferProducer:
                 self.checkAndAddFileToDB(tFile)
 
         print(f"Finally - +{self.kount}")
-        if len(self.disk) > 5 and len(self.disk.split("/")) > 1:
-            print(f"No magic start file to remove ...")
-            return
+        # if len(self.disk) > 5 and len(self.disk.split("/")) > 1:
+        #     print(f"No magic start file to remove ...")
+        #     return
         print(f"Removing the magic start file")
         fMagic = "/" + self.disk + "/" + miConf.magicStart
         try:

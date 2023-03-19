@@ -90,12 +90,12 @@ class mUtils:
         lfnz="",
         zsiz="",
         zcksum="",
-        dCacheStatus="No",
+        dCacheStatus="",
         dCacheTime="-1",
-        AntStatus="No",
+        AntStatus="",
         AntTime="-1",
         AntFTSID="-1",
-        MigStatus="No",
+        MigStatus="",
     ):
         # Only update if variable is changed.
         # migDisk, migSize, migTime and migChkSum are filled in when adding the record.
@@ -106,18 +106,33 @@ class mUtils:
             mUpdated["migZipFile"] = lfnz
             mUpdated["migZipSize"] = zsiz
             mUpdated["migZipChkSum"] = zcksum
-        if dCacheStatus != "No":
+        if dCacheStatus != "":
             mUpdated["migDCacheStatus"] = dCacheStatus
         if type(dCacheTime) != type(""):
             mUpdated["migDCacheTime"] = dCacheTime
-        if AntStatus != "No":
+        if AntStatus != "":
             mUpdated["migAntStatus"] = AntStatus
         if type(AntTime) != type(""):
             mUpdated["migAntTime"] = AntTime
         if AntFTSID != "-1":
             mUpdated["migAntFTSID"] = AntFTSID
-        if MigStatus != "No":
+        if MigStatus != "":
             mUpdated["migMigStatus"] = MigStatus
+
+        mlfn = self.s.query(mig_db).filter_by(migFile=mF)
+        mlfn.update(mUpdated)
+        self.s.commit()
+
+    def resetFileInDB(self, mF):
+        # Reset values because we want to redo the transfer
+        mUpdated = {}
+        mUpdated["migChkSum"] = ""
+        mUpdated["migZipFile"] = ""
+        mUpdated["migZipSize"] = ""
+        mUpdated["migZipChkSum"] = ""
+        mUpdated["migDCacheStatus"] = "No"
+        mUpdated["migAntStatus"] = "No"
+        mUpdated["migMigStatus"] = "No"
 
         mlfn = self.s.query(mig_db).filter_by(migFile=mF)
         mlfn.update(mUpdated)
