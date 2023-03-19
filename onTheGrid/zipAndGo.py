@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import os, sys, time, subprocess
-import fts3.rest.client as fsubmit
+# import fts3.rest.client as fsubmit
 import fts3.rest.client.easy as fts3
 
 cwd = os.getcwd()
