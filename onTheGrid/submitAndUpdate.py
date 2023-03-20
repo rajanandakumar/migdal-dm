@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import os, sys, time, subprocess
 import fts3.rest.client.easy as fts3
-from fts3.rest.client.exceptions import NotFound
+from fts3.rest.client.exceptions import NotFound, TryAgain
 
 sys.path.append("..")
 from db_interface import *
@@ -45,6 +45,8 @@ for fnn in mlfn:
     context = fts3.Context(miConf.ftsServ)
     try:
         ftsStat = fts3.get_job_status(context, ftsID)
+    except TryAgain:
+        continue # Try again later
     except NotFound:
         print(f"FTS job {ftsID} missing. Resubmit transfer")
         di.updateFileInDB(lfn, AntStatus="No")
