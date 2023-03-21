@@ -49,7 +49,10 @@ for fnn in mlfn:
     except TryAgain:
         continue # Try again later
     except NotFound:
-        print(f"FTS job {ftsID} missing. Resubmit transfer")
+        aa = fnn.migAntStatus
+        bb = fnn.mig_db.migDCacheStatus
+        cc = fnn.migMigStatus
+        print(f"FTS job {ftsID} {aa} {bb} {cc} missing. Resubmit transfer")
         # di.updateFileInDB(lfn, AntStatus="No")
         # zFile = fnn.migZipFile
         # tapeFile = miConf.antPath + lfn + miConf.zipSuffix
