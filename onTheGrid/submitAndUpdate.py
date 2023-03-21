@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 import os, sys, time, subprocess
 import fts3.rest.client.easy as fts3
-from fts3.rest.client.exceptions import NotFound, TryAgain
-from sqlalchemy import and_
 import fts3.rest.client.exceptions as fex
+from sqlalchemy import and_
 
 sys.path.append("..")
 from db_interface import *
@@ -45,26 +44,19 @@ for fnn in mlfn:
     lfn = fnn.migFile
     ftsID = fnn.migAntFTSID
     context = fts3.Context(miConf.ftsServ)
-    aa = fnn.migAntStatus
-    bb = fnn.migDCacheStatus
-    cc = fnn.migMigStatus
-    print(f"FTS job information ... {ftsID} {aa} {bb} {cc}")
     try:
         ftsStat = fts3.get_job_status(context, ftsID)
     except fex.TryAgain:
         continue # Try again later
     except fex.NotFound:
-        aa = fnn.migAntStatus
-        bb = fnn.migDCacheStatus
-        cc = fnn.migMigStatus
-        print(f"FTS job {ftsID} {aa} {bb} {cc} missing. Resubmit transfer")
-        # di.updateFileInDB(lfn, AntStatus="No")
-        # zFile = fnn.migZipFile
-        # tapeFile = miConf.antPath + lfn + miConf.zipSuffix
-        # transf = fts3.new_transfer(zFile, tapeFile)
-        # job = fts3.new_job(transfers=[transf], overwrite=True, verify_checksum=True, reuse=False, retry=5)
-        # ftsJobID = fts3.submit(context, job, delegation_lifetime=fts3.timedelta(hours=72))
-        # di.updateFileInDB(lfn, AntStatus="Submitted", MigStatus="No", AntFTSID=ftsJobID)
+        print(f"FTS job {ftsID} missing. Resubmit transfer")
+        di.updateFileInDB(lfn, AntStatus="No")
+        zFile = fnn.migZipFile
+        tapeFile = miConf.antPath + lfn + miConf.zipSuffix
+        transf = fts3.new_transfer(zFile, tapeFile)
+        job = fts3.new_job(transfers=[transf], overwrite=True, verify_checksum=True, reuse=False, retry=5)
+        ftsJobID = fts3.submit(context, job, delegation_lifetime=fts3.timedelta(hours=72))
+        di.updateFileInDB(lfn, AntStatus="Submitted", MigStatus="No", AntFTSID=ftsJobID)
         continue
     except e:
         print(e)
