@@ -3,7 +3,7 @@ import os, sys, time, subprocess
 import fts3.rest.client.easy as fts3
 from fts3.rest.client.exceptions import NotFound, TryAgain
 from sqlalchemy import and_
-import fts3 as fts_ex
+import fts3.rest.client.exceptions as fex
 
 sys.path.append("..")
 from db_interface import *
@@ -51,9 +51,9 @@ for fnn in mlfn:
     print(f"FTS job information ... {ftsID} {aa} {bb} {cc}")
     try:
         ftsStat = fts3.get_job_status(context, ftsID)
-    except fts_ex.rest.client.exceptions.TryAgain:
+    except fex.TryAgain:
         continue # Try again later
-    except NotFound:
+    except fex.NotFound:
         aa = fnn.migAntStatus
         bb = fnn.mig_db.migDCacheStatus
         cc = fnn.migMigStatus
