@@ -45,7 +45,7 @@ for fnn in mlfn:
     ftsID = fnn.migAntFTSID
     context = fts3.Context(miConf.ftsServ)
     aa = fnn.migAntStatus
-    bb = fnn.mig_db.migDCacheStatus
+    bb = fnn.migDCacheStatus
     cc = fnn.migMigStatus
     print(f"FTS job information ... {ftsID} {aa} {bb} {cc}")
     try:
