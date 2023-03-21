@@ -48,7 +48,7 @@ for fnn in mlfn:
         ftsStat = fts3.get_job_status(context, ftsID)
     except TryAgain:
         continue # Try again later
-    except NotFound:
+    except fts3.rest.client.exceptions.NotFound:
         aa = fnn.migAntStatus
         bb = fnn.mig_db.migDCacheStatus
         cc = fnn.migMigStatus
