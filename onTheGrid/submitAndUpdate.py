@@ -44,6 +44,10 @@ for fnn in mlfn:
     lfn = fnn.migFile
     ftsID = fnn.migAntFTSID
     context = fts3.Context(miConf.ftsServ)
+    aa = fnn.migAntStatus
+    bb = fnn.mig_db.migDCacheStatus
+    cc = fnn.migMigStatus
+    print(f"FTS job information ... {ftsID} {aa} {bb} {cc}")
     try:
         ftsStat = fts3.get_job_status(context, ftsID)
     except TryAgain:
