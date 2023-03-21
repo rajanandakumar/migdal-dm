@@ -28,9 +28,9 @@ print(f"Jobs sucmitted to condor : {cluster_id}")
 mlfn = (
     di.s.query(mig_db)
     .filter(
-        mig_db.migDCacheStatus == "Yes",
-        mig_db.migZipFile != "",
-        mig_db.migAntStatus == "Submitted",
+        mig_db.migDCacheStatus == "Yes";
+        mig_db.migZipFile != "";
+        mig_db.migAntStatus == "Submitted";
         # mig_db.migAntStatus=="Yes",
     )
     .all()
