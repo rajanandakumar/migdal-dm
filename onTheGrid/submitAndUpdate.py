@@ -50,13 +50,13 @@ for fnn in mlfn:
         continue # Try again later
     except NotFound:
         print(f"FTS job {ftsID} missing. Resubmit transfer")
-        di.updateFileInDB(lfn, AntStatus="No")
-        zFile = fnn.migZipFile
-        tapeFile = miConf.antPath + lfn + miConf.zipSuffix
-        transf = fts3.new_transfer(zFile, tapeFile)
-        job = fts3.new_job(transfers=[transf], overwrite=True, verify_checksum=True, reuse=False, retry=5)
-        ftsJobID = fts3.submit(context, job, delegation_lifetime=fts3.timedelta(hours=72))
-        di.updateFileInDB(lfn, AntStatus="Submitted", MigStatus="No", AntFTSID=ftsJobID)
+        # di.updateFileInDB(lfn, AntStatus="No")
+        # zFile = fnn.migZipFile
+        # tapeFile = miConf.antPath + lfn + miConf.zipSuffix
+        # transf = fts3.new_transfer(zFile, tapeFile)
+        # job = fts3.new_job(transfers=[transf], overwrite=True, verify_checksum=True, reuse=False, retry=5)
+        # ftsJobID = fts3.submit(context, job, delegation_lifetime=fts3.timedelta(hours=72))
+        # di.updateFileInDB(lfn, AntStatus="Submitted", MigStatus="No", AntFTSID=ftsJobID)
         continue
     if ftsStat["job_state"] == "FINISHED":
         antTime = datetime.datetime.strptime(ftsStat["job_finished"], "%Y-%m-%dT%H:%M:%S")
