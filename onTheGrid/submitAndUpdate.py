@@ -27,13 +27,13 @@ print(f"Jobs sucmitted to condor : {cluster_id}")
 # Have the files been transferred to Antares?
 mlfn = (
     di.s.query(mig_db)
-    .filter(
-        mig_db.migDCacheStatus == "Yes";
-        mig_db.migZipFile != "";
-        mig_db.migAntStatus == "Submitted";
+    .filter(and_(
+        mig_db.migDCacheStatus == "Yes",
+        mig_db.migZipFile != "",
+        mig_db.migAntStatus == "Submitted",
         # mig_db.migAntStatus=="Yes",
-    )
-    .all()
+    ))
+    # .all()
 )
 
 print(f"Checking {len(mlfn)} files ...")
