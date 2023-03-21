@@ -3,6 +3,7 @@ import os, sys, time, subprocess
 import fts3.rest.client.easy as fts3
 from fts3.rest.client.exceptions import NotFound, TryAgain
 from sqlalchemy import and_
+import fts3
 
 sys.path.append("..")
 from db_interface import *
