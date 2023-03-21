@@ -55,7 +55,7 @@ for fnn in mlfn:
         continue # Try again later
     except fex.NotFound:
         aa = fnn.migAntStatus
-        bb = fnn.mig_db.migDCacheStatus
+        bb = fnn.migDCacheStatus
         cc = fnn.migMigStatus
         print(f"FTS job {ftsID} {aa} {bb} {cc} missing. Resubmit transfer")
         # di.updateFileInDB(lfn, AntStatus="No")
