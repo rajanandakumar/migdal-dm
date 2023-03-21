@@ -34,7 +34,7 @@ mlfn = (
         mig_db.migAntStatus == "Submitted",
         # mig_db.migAntStatus=="Yes",
     ))
-    # .all()
+    .all()
 )
 
 print(f"Checking {len(mlfn)} files ...")
