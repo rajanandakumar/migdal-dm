@@ -58,7 +58,7 @@ for fnn in mlfn:
         ftsJobID = fts3.submit(context, job, delegation_lifetime=fts3.timedelta(hours=72))
         di.updateFileInDB(lfn, AntStatus="Submitted", MigStatus="No", AntFTSID=ftsJobID)
         continue
-    except e:
+    except Exception as e:
         print(e)
         continue
     if ftsStat["job_state"] == "FINISHED":
