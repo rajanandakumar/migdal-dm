@@ -39,7 +39,7 @@ class miConf:
     # Stuff for Tier-1 Antares
     protocolAnt = "root"
     destAnt = "antares.stfc.ac.uk"
-    pathAnt = "/eos/antares/prod/migdal/test"
+    pathAnt = "/eos/antares/prod/migdal"
     antPath = protocolAnt + "://" + destAnt + pathAnt
 
     # FTS server we use.
