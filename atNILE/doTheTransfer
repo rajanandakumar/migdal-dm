@@ -83,4 +83,4 @@ try:
                 break
 except (IOError, PermissionError, FileNotFoundError) as e:
     print(e)
-    print("No permission to delete the file / directory {sFile}")
+    print(f"No permission to delete the file / directory {sFile}")
