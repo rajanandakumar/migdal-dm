@@ -1,0 +1,15 @@
+Questions :
+1. Where to locate the software
+2. How much quota remaining for me?
+3. flask location - needs access to sqlite dB
+4. gfal xattr - what tells me that the file has been migrated to tape?
+
+
+   78  pip install m2crypto
+   80  pip install swig
+   84  pip install build-essential
+  119  pip install M2Crypto
+  120  pip install fts3
+  122  pip install sqlalchemy
+  407  pip3 install BOOST
+  719  pip install htcondor
