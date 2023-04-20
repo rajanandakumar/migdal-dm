@@ -12,4 +12,4 @@ yesterday=`date '+%C%y-%m-%d' -d "$end_date-1 days"`
 mkdir -p $yesterday
 
 # Move the logs into the "yesterday" directory
-find ./ -maxdepth 1 -atime 0 | grep out | xargs -l mv -t $yesterday 
+find ./ -maxdepth 1 -atime 0 | grep out | xargs -r -l mv -t $yesterday 
