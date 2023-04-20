@@ -43,11 +43,17 @@ print(f"Checking {len(mlfn)} files ...")
 for fnn in mlfn:
     lfn = fnn.migFile
     ftsID = fnn.migAntFTSID
-    context = fts3.Context(miConf.ftsServ)
+    try:
+        context = fts3.Context(miConf.ftsServ)
+    except fex.TryAgain:
+        print(f"FTS server {miConf.ftsServ} busy? Try again later.")
+        continue # Try again later
+    except fex.BadEndpoint:
+        print(f"FTS server {miConf.ftsServ} very busy? Try again later.")
+        continue # Try again later
+
     try:
         ftsStat = fts3.get_job_status(context, ftsID)
-    except fex.TryAgain:
-        continue # Try again later
     except fex.NotFound:
         print(f"FTS job {ftsID} missing. Resubmit transfer")
         # di.updateFileInDB(lfn, AntStatus="No")
