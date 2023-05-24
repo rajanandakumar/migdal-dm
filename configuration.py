@@ -6,11 +6,11 @@ class miConf:
     magicStart = "ReadyToTransfer"
     magicFinish = "ReadyForData"
     disks = ["data1", "data2", "data3", "data4"]
-    # disks = ["data1", "data2", "data3", "data4", "data2/221220", "data1/221220", "data3/221221"]
-    # disks = ["data1", "data2", "data3", "data4", "data2/230113"]
+    # disks = ["data1", "data2", "data3", "data4", "data1/test_bandwidth"]
 
     # Flag to control if we delete unzipped file on dCache after file has been
     # migrated to tape
+    maxCondorJobsInIteration = 150
     cleanUpUnzipped = False
 
     # Stuff for PPD dCache

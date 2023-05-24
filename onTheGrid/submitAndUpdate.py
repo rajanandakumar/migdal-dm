@@ -21,7 +21,7 @@ for fnn in mlfn:
     with testJob.schedd.transaction() as txn:
         cluster_id.append(testJob.sub.queue(txn))
     # Submitting 30 jobs every iteration (10 minutes?) should be more than enough
-    if kount > 30:
+    if kount > miConf.maxCondorJobsInIteration:
         break
 print(f"Jobs sucmitted to condor : {cluster_id}")
 
