@@ -57,6 +57,7 @@ cksum = theInfo[0].decode().split()[1]
 di.updateFileInDB(lfn, cksum=cksum, dCacheStatus="Yes", dCacheTime=dCacheTime)
 
 try:
+    print(f"Removing the file that has been transferred ... {sFile}")
     os.unlink(sFile)
     while sFile[1:] not in miConf.disks:
         # Go successively up the directory chain deleting if empty directory
@@ -78,6 +79,7 @@ try:
                         print("Wrote Magic finish file")
             elif len(os.listdir(sFile)) == 0:
                 # Delete empty directory
+                print(f"Deleting empty directory {sFile}")
                 shutil.rmtree(sFile)
             else:
                 break
