@@ -13,6 +13,7 @@ Need a virtual environment with the following packages
   - Create it using "voms-proxy-init --voms gridpp:/gridpp/migdal/Role=production  --valid 168:0"
   - Copy the proxy to ```someplace``` useful
   - Set the variable using "export X509_USER_PROXY=```someplace```"
+- Note that this system currently uses the X509 certificate/proxy mechanism. Updating this to tokens is left as an exercise to the interested user.
 
 **Directories** 
 
