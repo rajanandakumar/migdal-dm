@@ -51,7 +51,7 @@ Need a virtual environment with the following packages
   - Run the shell script `updateCron.sh` in the onTheGrid directory. Run it say every 10 minutes or so.
   - There are a bunch of other shell scripts that can be of use, but not strictly essential for basic operation of the DAQ system. Use appropriately.
     - `moveCondorLogs.sh` : Move the HTCondor logs of the zipping grid jobs into a date specified directory, to avoid overloading the file system.
-    - `cleanUpCron.sh` : Cleans up spray from crazily initialised grid jobs polluting the `/opt/ppd/darkmatter` directory
+    - `cleanUpCron.sh` : Cleans up spray from crazily initialised grid jobs polluting the `/opt/ppd/darkmatter/migdal/dataTransfer/onTheGrid` directory
     - `checkZipping.py` : Checks that all the files in a given day have been properly zipped, using checksums.
     - `checkAntaresStatus.py` : Example showing how to check that all the files for a given day are in Antares.
     - `diracRegister.py` : Example showing how to register files with the Imperial DIRAC instance.
