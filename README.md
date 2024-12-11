@@ -41,7 +41,18 @@ Need a virtual environment with the following packages
   - python3 submitAndUpdate.py
   - It can be run as often as needed - preferably after the previous one has been finished
 
-**Plan**
+**Operational procedure**
 
-1. Run the job for each of "onTheGrid" and "atNILE" directories as a cron job, maybe once every 5 minutes
-2. Preferably run the cron job using "flock" command to prevent it from running multiple times in parallel without control.
+- Migdal DAQ PC:
+  -  Make sure that there is a VOMS proxy available. See the prelude above and the file proxy.sh in `/opt/ppd/darkmatter/migdal/dataTransfer` on the DAQ PC.
+  -  There are two shell scripts in the atNILE directory : `transferCronWriteDB.sh` and `transferCronToPPD.sh`. These need to be run at some reasonable frequency using cron - say every 5 minutes for the first and every minute for the second.
+- Mercury cluster:
+  - VOMS proxy needed as above
+  - Run the shell script `updateCron.sh` in the onTheGrid directory. Run it say every 10 minutes or so.
+  - There are a bunch of other shell scripts that can be of use, but not strictly essential for basic operation of the DAQ system. Use appropriately.
+    - `moveCondorLogs.sh` : Move the HTCondor logs of the zipping grid jobs into a date specified directory, to avoid overloading the file system.
+    - `cleanUpCron.sh` : Cleans up spray from crazily initialised grid jobs polluting the `/opt/ppd/darkmatter` directory
+    - `checkZipping.py` : Checks that all the files in a given day have been properly zipped, using checksums.
+    - `checkAntaresStatus.py` : Example showing how to check that all the files for a given day are in Antares.
+    - `diracRegister.py` : Example showing how to register files with the Imperial DIRAC instance.
+    - `test_stageFile.py` : Example showing how to get a file from the Antares (tape) system to RAL PPD dCache. The staging is automatically handled by FTS (in the script).
